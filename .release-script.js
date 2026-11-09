@@ -4,7 +4,7 @@ const { execSync } = require('child_process');
 
 const rootDir = path.resolve(__dirname);
 const packageJsonPath = path.join(rootDir, 'package.json');
-const phpPluginPath = path.join(rootDir, 'NEW_PLUGIN_NAME.php');
+const phpPluginPath = path.join(rootDir, 'nrfc_person_directory.php');
 const changelogPath = path.join(rootDir, 'changelog.md');
 
 const ALLOWED_ACTIONS = ['feat', 'fix', 'chore', 'docs', 'refactor', 'test', 'perf'];
@@ -182,7 +182,7 @@ function main() {
   updatePhpPluginVersion(nextVersion);
   updateChangelogFile(changelogEntry);
 
-  console.log(`Updated package.json and NEW_PLUGIN_NAME.php to ${nextVersion}`);
+  console.log(`Updated package.json and nrfc_person_directory.php to ${nextVersion}`);
   console.log(`Updated changelog.md`);
 
   if (!noGit) {

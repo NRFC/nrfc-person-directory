@@ -1,5 +1,5 @@
 {
-  "name": "NEW_PLUGIN_NAME",
+  "name": "nrfc_person_directory",
   "version": "1.0.1",
   "license": "MIT",
   "devDependencies": {

@@ -31,8 +31,8 @@ services:
       WORDPRESS_DEBUG: "1"
     volumes:
       - wordpress_data:/var/www/html
-      - ./NEW_PLUGIN_NAME.php:/var/www/html/wp-content/plugins/NEW_PLUGIN_NAME/NEW_PLUGIN_NAME.php:ro
-      - ./src:/var/www/html/wp-content/plugins/NEW_PLUGIN_NAME/src:ro
+      - ./nrfc-person-directory.php:/var/www/html/wp-content/plugins/nrfc-person-directory/nrfc-person-directory.php:ro
+      - ./src:/var/www/html/wp-content/plugins/nrfc-person-directory/src:ro
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "--output", "/dev/null", "http://localhost/wp-login.php"]
       interval: 5s
@@ -57,8 +57,8 @@ services:
       WORDPRESS_ADMIN_EMAIL: ${WORDPRESS_ADMIN_EMAIL:-admin@example.test}
     volumes:
       - wordpress_data:/var/www/html
-      - ./NEW_PLUGIN_NAME.php:/var/www/html/wp-content/plugins/NEW_PLUGIN_NAME/NEW_PLUGIN_NAME.php:ro
-      - ./src:/var/www/html/wp-content/plugins/NEW_PLUGIN_NAME/src:ro
+      - ./nrfc-person-directory.php:/var/www/html/wp-content/plugins/nrfc-person-directory/nrfc-person-directory.php:ro
+      - ./src:/var/www/html/wp-content/plugins/nrfc-person-directory/src:ro
     entrypoint: ["/bin/sh", "-ec"]
     command:
       - |
@@ -71,8 +71,8 @@ services:
             --admin_email="$$WORDPRESS_ADMIN_EMAIL" \
             --skip-email
         fi
-        wp plugin activate NEW_PLUGIN_NAME
-        wp plugin is-active NEW_PLUGIN_NAME
+        wp plugin activate nrfc-person-directory
+        wp plugin is-active nrfc-person-directory
         wp post create --post_type=post --post_title="Sample page 1" --post_content="Page 1" --post_status=publish
         wp post create --post_type=post --post_title="Sample page 2" --post_content="Page 2" --post_status=publish
         wp post create --post_type=post --post_title="Sample page 3" --post_content="Page 3" --post_status=publish

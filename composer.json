@@ -1,6 +1,6 @@
 {
-  "name": "VENDOR/NEW_PLUGIN_NAME",
-  "description": "NEW_PLUGIN_NAME plugin for wordpress",
+  "name": "nrfc/nrfc_person_directory",
+  "description": "nrfc_person_directory plugin for wordpress",
   "type": "wordpress-plugin",
   "require-dev": {
     "phpunit/phpunit": "^11.5"
@@ -12,7 +12,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "NEW_PLUGIN_NAME\\Tests\\": "tests/"
+      "nrfc_person_directory\\Tests\\": "tests/"
     }
   },
   "scripts": {

@@ -7,7 +7,7 @@
   cacheDirectory=".phpunit.cache"
 >
   <testsuites>
-    <testsuite name="NEW_PLUGIN_NAME Unit Tests">
+    <testsuite name="nrfc_person_directory Unit Tests">
       <directory>tests</directory>
     </testsuite>
   </testsuites>
