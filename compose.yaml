@@ -1,0 +1,89 @@
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-changemenow}
+      - MYSQL_USER=${WORDPRESS_DB_USER:-wordpress}
+      - MYSQL_PASSWORD=${WORDPRESS_DB_PASSWORD:-wordpress}
+      - MYSQL_DATABASE=${WORDPRESS_DB_NAME:-wordpress}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_PASSWORD\" mysql --protocol=TCP -h 127.0.0.1 -u \"$$MYSQL_USER\" \"$$MYSQL_DATABASE\" -e 'SELECT 1'"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  wordpress:
+    image: wordpress:7.1.2-php8.4-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${WORDPRESS_PORT:-8080}:80"
+    environment: &wordpress-environment
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-wordpress}
+      WORDPRESS_DEBUG: "1"
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./NEW_PLUGIN_NAME.php:/var/www/html/wp-content/plugins/NEW_PLUGIN_NAME/NEW_PLUGIN_NAME.php:ro
+      - ./src:/var/www/html/wp-content/plugins/NEW_PLUGIN_NAME/src:ro
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--output", "/dev/null", "http://localhost/wp-login.php"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  wordpress-setup:
+    image: wordpress:cli-php8.4
+    user: "33:33"
+    depends_on:
+      db:
+        condition: service_healthy
+      wordpress:
+        condition: service_healthy
+    environment:
+      <<: *wordpress-environment
+      WORDPRESS_URL: http://localhost:${WORDPRESS_PORT:-8080}
+      WORDPRESS_TITLE: ${WORDPRESS_TITLE:-Wordpress Plugin Development}
+      WORDPRESS_ADMIN_USER: ${WORDPRESS_ADMIN_USER:-admin}
+      WORDPRESS_ADMIN_PASSWORD: ${WORDPRESS_ADMIN_PASSWORD:-local-dev-password}
+      WORDPRESS_ADMIN_EMAIL: ${WORDPRESS_ADMIN_EMAIL:-admin@example.test}
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./NEW_PLUGIN_NAME.php:/var/www/html/wp-content/plugins/NEW_PLUGIN_NAME/NEW_PLUGIN_NAME.php:ro
+      - ./src:/var/www/html/wp-content/plugins/NEW_PLUGIN_NAME/src:ro
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        if ! wp core is-installed; then
+          wp core install \
+            --url="$$WORDPRESS_URL" \
+            --title="$$WORDPRESS_TITLE" \
+            --admin_user="$$WORDPRESS_ADMIN_USER" \
+            --admin_password="$$WORDPRESS_ADMIN_PASSWORD" \
+            --admin_email="$$WORDPRESS_ADMIN_EMAIL" \
+            --skip-email
+        fi
+        wp plugin activate NEW_PLUGIN_NAME
+        wp plugin is-active NEW_PLUGIN_NAME
+        wp post create --post_type=post --post_title="Sample page 1" --post_content="Page 1" --post_status=publish
+        wp post create --post_type=post --post_title="Sample page 2" --post_content="Page 2" --post_status=publish
+        wp post create --post_type=post --post_title="Sample page 3" --post_content="Page 3" --post_status=publish
+        wp post create --post_type=post --post_title="Sample page 4" --post_content="Page 4" --post_status=publish
+        wp post create --post_type=post --post_title="Sample page 5" --post_content="Page 5" --post_status=publish
+        if ! wp user get admin --field=ID; then
+          wp user create admin admin@example.com --role=administrator
+        fi
+        wp user update admin --user_pass="local-dev-password"
+        cp /usr/local/bin/wp /var/www/html
+
+volumes:
+  db_data:
+  wordpress_data:
