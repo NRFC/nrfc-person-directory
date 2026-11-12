@@ -31,3 +31,7 @@ $plugin = new PersonDirectory();
 // Register activation/deactivation hooks
 register_activation_hook( __FILE__, array( $plugin, 'activate' ) );
 register_deactivation_hook( __FILE__, array( $plugin, 'deactivate' ) );
+
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once plugin_dir_path( __FILE__ ) . 'src/PersonDirectory_Test_Fixtures.php';
+}
