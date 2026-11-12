@@ -3,6 +3,8 @@ import { execSync } from 'node:child_process';
 
 async function globalTeardown(config: FullConfig) {
     console.log('Running global teardown: tearing down Docker Compose...');
+    const cmd = 'docker compose exec -T wordpress /var/www/html/wp --allow-root nrfc-person-directory cleanup-people';
+    execSync(cmd, { stdio: 'inherit' });
     try {
         // Executes `docker compose down --volumes` from the root directory
         execSync('docker compose down --volumes', { stdio: 'inherit' });

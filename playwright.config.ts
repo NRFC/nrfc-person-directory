@@ -12,6 +12,8 @@ const baseURL = `http://localhost:${process.env.WORDPRESS_PORT || '8080'}`;
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  globalSetup: require.resolve('./e2e/global.setup'),
+  globalTeardown: require.resolve('./e2e/global.teardown'),
   testDir: './e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -83,6 +85,4 @@ export default defineConfig({
     stdout: 'pipe',
     gracefulShutdown: { signal: 'SIGTERM', timeout: 30_000 },
   },
-
-  globalTeardown: './e2e/global.teardown.ts',
 });
